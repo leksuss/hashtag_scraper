@@ -1,10 +1,20 @@
-from datetime import datetime
+import enum
 
 from sqlalchemy import Integer, String, BigInteger, ForeignKey, Enum, UniqueConstraint, func, DateTime
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.types import Date
 
-from app.schemas.common import SocialNetworksEnum
+
+class SocialNetworksEnum(enum.Enum):
+    VK = 'vk'
+    YT = 'yt'
+    IG = 'ig'
+
+
+class ResourceTypeEnum(enum.Enum):
+    VK = 'videopost'
+    IG = 'clip'
+    YT = 'video'
 
 
 class Base(DeclarativeBase):
@@ -20,8 +30,8 @@ class Post(Base):
     id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True, nullable=False, autoincrement=True, index=True)
     social_network: Mapped[SocialNetworksEnum] = mapped_column(Enum(SocialNetworksEnum), nullable=False)
     type: Mapped[String] = mapped_column(String(200), nullable=True)
-    author_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
-    resource_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
+    author_id: Mapped[Integer] = mapped_column(String(200), nullable=True)
+    resource_id: Mapped[Integer] = mapped_column(String(200), nullable=True)
     date_published: Mapped[Date] = mapped_column(Date, nullable=False)
     views: Mapped[Integer] = mapped_column(Integer, nullable=True)
     likes: Mapped[Integer] = mapped_column(Integer, nullable=True)
@@ -32,7 +42,7 @@ class Post(Base):
     hashtag = relationship('Hashtag', cascade='all, delete', back_populates='posts')
 
     def __repr__(self):
-        return f'Post id={self.id}'
+        return f'Resource id={self.id}'
 
 
 class Hashtag(Base):

@@ -1,18 +1,9 @@
-import enum
 from datetime import date
 from typing import List, Dict, Optional
 
 from pydantic import BaseModel
 
-
-class SocialNetworksEnum(enum.Enum):
-    VK = 'vk'
-    IG = 'ig'
-
-
-class PostTypeEnum(enum.Enum):
-    VK = 'videopost'
-    IG = 'clip'
+from app.storage.models import SocialNetworksEnum
 
 
 class Campaign(BaseModel):
