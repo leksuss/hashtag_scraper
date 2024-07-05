@@ -26,6 +26,7 @@ class Post(Base):
     views: Mapped[Integer] = mapped_column(Integer, nullable=True)
     likes: Mapped[Integer] = mapped_column(Integer, nullable=True)
     updated_at: Mapped[Date] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now(), onupdate=func.now())
+    nickname: Mapped[String] = mapped_column(String(200), nullable=True)
     hashtag_id: Mapped[Integer] = mapped_column(Integer, ForeignKey('hashtag.id'))
 
     hashtag = relationship('Hashtag', cascade='all, delete', back_populates='posts')
