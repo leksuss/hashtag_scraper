@@ -15,8 +15,8 @@ def prepare_post_for_db(post: VKResponsePostSchema, hashtag) -> dict:
         'type': 'wall',
         'views': post.attachments[0].video.views,
         'likes': post.likes['count'],
-        'author_vk_id': post.from_id,
-        'resource_vk_id': post.id,
+        'author_id': post.from_id,
+        'resource_id': post.id,
         'hashtag_id': hashtag.id,
     }
     return post_for_db
@@ -41,8 +41,8 @@ def prepare_clip_for_db(page:Page, hashtag) -> dict:
         'type': 'clip',
         'views': views,
         'likes': int(page.query_selector('.like_button_count').inner_text().strip().replace(' ', '') or 0),
-        'author_vk_id': int(author_vk_id),
-        'resource_vk_id': int(resource_vk_id),
+        'author_id': int(author_vk_id),
+        'resource_id': int(resource_vk_id),
         'hashtag_id': hashtag.id,
     }
     return clip_for_db

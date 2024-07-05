@@ -51,7 +51,9 @@ def get_vk_videos(campaign_id: int, start_from: str) -> None:
         # posts_for_update = []
         for post in posts:
             post_prepared_for_db = vk_processor.prepare_post_for_db(post, hashtag)
-            db_service.create_or_update_post(post_prepared_for_db)
+            is_created = db_service.create_or_update_post(post_prepared_for_db)
+            if is_created:
+                count_added_with_hashtag += 1
 
         # обновляем просмотры и лайки в старых публикациях
         # received_posts_for_update = vk_scraper.fetch_posts_for_update(env('VK_API_TOKEN'), posts_for_update)
@@ -62,3 +64,5 @@ def get_vk_videos(campaign_id: int, start_from: str) -> None:
 
     logger.info(f'Total added {count_total} posts')
     logger.info('VK hashtag scraper finished')
+
+get_vk_videos(1, '10.06.2024')

@@ -11,16 +11,16 @@ query = '''
         p.type as "Тип публикации",
         CASE
             WHEN p.type = 'wall' THEN
-                CONCAT('https://vk.com/wall', p.author_vk_id, '_', p.resource_vk_id)
+                CONCAT('https://vk.com/wall', p.author_id, '_', p.resource_id)
             WHEN p.type = 'clip' THEN
-                CONCAT('https://vk.com/clips/hashtag/', h.name, '?z=clip', p.author_vk_id, '_', p.resource_vk_id)
+                CONCAT('https://vk.com/clips/hashtag/', h.name, '?z=clip', p.author_id, '_', p.resource_id)
         END AS "ссылка на публикацию",
         p.date_published as "Дата публикации",
         p.views as "Просмотры",
         p.likes as "Лайки",
         CASE
-            WHEN author_vk_id < 0 THEN CONCAT('https://vk.com/club', ABS(author_vk_id))
-            ELSE CONCAT('https://vk.com/id', author_vk_id)
+            WHEN author_id < 0 THEN CONCAT('https://vk.com/club', ABS(author_id))
+            ELSE CONCAT('https://vk.com/id', author_id)
         END AS "Автор",
         h.name as "Хэштег"
     FROM post p
