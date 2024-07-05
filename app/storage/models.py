@@ -14,14 +14,14 @@ class Base(DeclarativeBase):
 class Post(Base):
     __tablename__ = 'post'
     __table_args__ = (
-        UniqueConstraint('author_vk_id', 'resource_vk_id', 'type', name='uq_publication'),
+        UniqueConstraint('author_id', 'resource_id', 'type', name='uq_publication'),
     )
 
     id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True, nullable=False, autoincrement=True, index=True)
     social_network: Mapped[SocialNetworksEnum] = mapped_column(Enum(SocialNetworksEnum), nullable=False)
     type: Mapped[String] = mapped_column(String(200), nullable=True)
-    author_vk_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
-    resource_vk_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
+    author_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
+    resource_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
     date_published: Mapped[Date] = mapped_column(Date, nullable=False)
     views: Mapped[Integer] = mapped_column(Integer, nullable=True)
     likes: Mapped[Integer] = mapped_column(Integer, nullable=True)
