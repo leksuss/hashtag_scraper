@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import List, Dict, Optional
 
 
-class VKResponseVideo(BaseModel):
+class VKResponseVideoSchema(BaseModel):
     id: int
     title: str
     description: Optional[str] = None
@@ -10,14 +10,14 @@ class VKResponseVideo(BaseModel):
     views: Optional[int] = 0
 
 
-class VKResponseAttachments(BaseModel):
+class VKResponseAttachmentsSchema(BaseModel):
     type: str
-    video: Optional[VKResponseVideo] = None
+    video: Optional[VKResponseVideoSchema] = None
     views: Optional[int] = 0
 
 
-class VKResponsePost(BaseModel):
-    attachments: List[VKResponseAttachments]
+class VKResponsePostSchema(BaseModel):
+    attachments: List[VKResponseAttachmentsSchema]
     date: int
     from_id: int
     id: int
@@ -26,16 +26,16 @@ class VKResponsePost(BaseModel):
     likes: Dict
 
 
-class VKResponseProfile(BaseModel):
+class VKResponseProfileSchema(BaseModel):
     id: int
     screen_name: str
 
 
-class VKResponse(BaseModel):
+class VKResponseSchema(BaseModel):
     count: int
     next_from: Optional[str] = None
-    items: List[VKResponsePost]
-    profiles: List[VKResponseProfile]
+    items: List[VKResponsePostSchema]
+    profiles: List[VKResponseProfileSchema]
 
 
 if __name__ == '__main__':
@@ -538,6 +538,10 @@ if __name__ == '__main__':
     from app.schemas.common import SocialNetworksEnum
 
     hashtag = get_hashtags_by(1)[0]
+
+    print(type(hashtag), type(hashtag.name))
+'''
+    hashtag = get_hashtags_by(1)[0]
     post = get_posts_with_video(settings.VK_API_TOKEN, hashtag.name)[0]
 
 
@@ -553,6 +557,6 @@ if __name__ == '__main__':
     print(video_url)
     post_url = f"https://vk.com/wall{vk_response_items.items[0].from_id}_{vk_response_items.items[0].id}"
     print(post_url)
-
+'''
 
 
