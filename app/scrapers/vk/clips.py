@@ -30,7 +30,7 @@ def run(playwright: Playwright, context_file: str, campaign_id: int) -> None:
                 continue
             clip_page = vk_scraper.fetch_clip_page(page, clip_params, clips_hashtag_link)
             clip_prepared_for_db = vk_processor.prepare_clip_for_db(clip_page, hashtag)
-            db_service.create_or_update_post(clip_prepared_for_db)
+            db_service.create_or_update_resource(clip_prepared_for_db)
             count_added_with_hashtag += 1
             time.sleep(1)
 

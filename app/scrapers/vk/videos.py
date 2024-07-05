@@ -12,7 +12,8 @@ from app.services import service as db_service
 
 logger = logging.getLogger(__name__)
 
-def get_vk_videos(campaign_id: int, start_from: str) -> None:
+def get_vk_videos(campaign_id: int, start_date: str, end_date: str=None) -> None:
+
     env = Env()
     env.read_env()
 
@@ -25,8 +26,14 @@ def get_vk_videos(campaign_id: int, start_from: str) -> None:
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
 
-    date_obj = datetime.strptime(start_from, '%d.%m.%Y')
-    start_time_stamp = int(time.mktime(date_obj.timetuple()))
+    start_date_obj = datetime.strptime(start_date, '%d.%m.%Y')
+    start_time_stamp = int(time.mktime(start_date_obj.timetuple()))
+
+    if end_date:
+        end_date_obj = datetime.strptime(start_date, '%d.%m.%Y')
+        end_time_stamp = int(time.mktime(end_date_obj.timetuple()))
+    else:
+        end_time_stamp = int(time.time())
 
     logger.info('VK hashtag scraper started')
 
@@ -38,7 +45,7 @@ def get_vk_videos(campaign_id: int, start_from: str) -> None:
                 hashtag.name,
                 period={
                     'start_time': start_time_stamp,
-                    'end_time': int(time.time()),  # current timestamp
+                    'end_time': end_time_stamp,
                 }
             )
         except:
@@ -51,7 +58,7 @@ def get_vk_videos(campaign_id: int, start_from: str) -> None:
         # posts_for_update = []
         for post in posts:
             post_prepared_for_db = vk_processor.prepare_post_for_db(post, hashtag)
-            is_created = db_service.create_or_update_post(post_prepared_for_db)
+            is_created = db_service.create_or_update_resource(post_prepared_for_db)
             if is_created:
                 count_added_with_hashtag += 1
 

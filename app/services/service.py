@@ -21,7 +21,7 @@ def get_updated_links_by(sn: SocialNetworksEnum, type: str) -> List[str]:
     return db.execute(query).all()
 
 
-def create_or_update_post(post: dict) -> bool | None:
+def create_or_update_resource(post: dict) -> bool | None:
     stmt = insert(Post).values(**post)
     update_condition = sa.cast(Post.updated_at, sa.Date) < sa.cast(sa.func.current_date(), sa.Date)
     upsert_stmt = stmt.on_conflict_do_update(  # Postgres only
@@ -38,6 +38,7 @@ def create_or_update_post(post: dict) -> bool | None:
     db.commit()
 
     return result.one_or_none()
+
 
 def get_hashtags_by(campaign) -> List[Hashtag]:
     query = sa.select(Hashtag).where(Hashtag.campaign_id == campaign)
@@ -67,6 +68,6 @@ if __name__ == '__main__':
 #    links = get_updated_links_by(SocialNetworksEnum.VK, 'clip')
 #    print(len(links))
 
-    create_or_update_post(post_for_db)
+    create_or_update_resource(post_for_db)
 
 
