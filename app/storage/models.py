@@ -1,32 +1,34 @@
-import enum
+from datetime import datetime
 
-from sqlalchemy import Integer, String, BigInteger, ForeignKey, Enum
+from sqlalchemy import Integer, String, BigInteger, ForeignKey, Enum, UniqueConstraint, func, DateTime
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.types import Date
+
+from app.schemas.common import SocialNetworksEnum
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class SocialNetworksEnum(enum.Enum):
-    VK = 'vk'
-    IG = 'ig'
-
-
 class Post(Base):
     __tablename__ = 'post'
+    __table_args__ = (
+        UniqueConstraint('author_vk_id', 'resource_vk_id', 'type', name='uq_publication'),
+    )
 
     id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True, nullable=False, autoincrement=True, index=True)
     social_network: Mapped[SocialNetworksEnum] = mapped_column(Enum(SocialNetworksEnum), nullable=False)
-    link: Mapped[String] = mapped_column(String(200), unique=True, nullable=False)
+    type: Mapped[String] = mapped_column(String(200), nullable=True)
+    author_vk_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
+    resource_vk_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
     date_published: Mapped[Date] = mapped_column(Date, nullable=False)
     views: Mapped[Integer] = mapped_column(Integer, nullable=True)
     likes: Mapped[Integer] = mapped_column(Integer, nullable=True)
-    author: Mapped[String] = mapped_column(String(200), nullable=False)
+    updated_at: Mapped[Date] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now(), onupdate=func.now())
     hashtag_id: Mapped[Integer] = mapped_column(Integer, ForeignKey('hashtag.id'))
 
-    hashtag = relationship('Hashtag', cascade='all, delete', back_populates='post')
+    hashtag = relationship('Hashtag', cascade='all, delete', back_populates='posts')
 
     def __repr__(self):
         return f'Post id={self.id}'
@@ -37,7 +39,22 @@ class Hashtag(Base):
 
     id: Mapped[BigInteger] = mapped_column(BigInteger, primary_key=True, nullable=False, autoincrement=True, index=True)
     name: Mapped[String] = mapped_column(String(200), unique=True, nullable=False)
-    post = relationship('Post', cascade='all, delete', back_populates='hashtag')
+    campaign_id: Mapped[Integer] = mapped_column(Integer, ForeignKey('campaign.id'))
+
+    posts = relationship('Post', cascade='all, delete', back_populates='hashtag')
+    campaign = relationship('Campaign', cascade='all, delete', back_populates='hashtags')
 
     def __repr__(self):
-        return f'Hashtag id={self.id}'
+        return f'Hashtag {self.name}'
+
+
+class Campaign(Base):
+    __tablename__ = 'campaign'
+
+    id: Mapped[BigInteger] = mapped_column(Integer, primary_key=True, nullable=False, autoincrement=True, index=True)
+    name: Mapped[String] = mapped_column(String(200), unique=True, nullable=False)
+
+    hashtags = relationship('Hashtag', cascade='all, delete', back_populates='campaign')
+
+    def __repr__(self):
+        return f'Campaign {self.name}'

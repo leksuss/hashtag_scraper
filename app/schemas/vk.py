@@ -7,11 +7,13 @@ class VKResponseVideo(BaseModel):
     title: str
     description: Optional[str] = None
     content_restricted: Optional[int] = 0
+    views: Optional[int] = 0
 
 
 class VKResponseAttachments(BaseModel):
     type: str
     video: Optional[VKResponseVideo] = None
+    views: Optional[int] = 0
 
 
 class VKResponsePost(BaseModel):
@@ -19,16 +21,21 @@ class VKResponsePost(BaseModel):
     date: int
     from_id: int
     id: int
-    from_id: int
     text: str
     views: Dict
     likes: Dict
+
+
+class VKResponseProfile(BaseModel):
+    id: int
+    screen_name: str
 
 
 class VKResponse(BaseModel):
     count: int
     next_from: Optional[str] = None
     items: List[VKResponsePost]
+    profiles: List[VKResponseProfile]
 
 
 if __name__ == '__main__':
@@ -523,6 +530,18 @@ if __name__ == '__main__':
             "total_count": 204
         }
     }
+
+    from app.scrapers.vk import prepare_post_for_db, get_posts_with_video
+    from app.config import settings
+    from app.services.service import get_hashtags_by
+
+    from app.schemas.common import SocialNetworksEnum
+
+    hashtag = get_hashtags_by(1)[0]
+    post = get_posts_with_video(settings.VK_API_TOKEN, hashtag.name)[0]
+
+
+
 
     vk_response_items = VKResponse(**json_string['response'])
 
