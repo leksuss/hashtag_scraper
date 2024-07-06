@@ -14,13 +14,22 @@ query = '''
                 CONCAT('https://vk.com/wall', p.author_id, '_', p.resource_id)
             WHEN p.type = 'clip' THEN
                 CONCAT('https://vk.com/clips/hashtag/', h.name, '?z=clip', p.author_id, '_', p.resource_id)
+            WHEN p.type = 'video' THEN
+                CONCAT('https://www.youtube.com/watch?v=', p.resource_id)
         END AS "ссылка на публикацию",
         p.date_published as "Дата публикации",
         p.views as "Просмотры",
         p.likes as "Лайки",
         CASE
-            WHEN author_id < 0 THEN CONCAT('https://vk.com/club', ABS(author_id))
-            ELSE CONCAT('https://vk.com/id', author_id)
+            WHEN p.social_network = 'VK' THEN
+                CASE
+                    WHEN CAST(p.author_id AS INTEGER) < 0 THEN
+                        CONCAT('https://vk.com/club', ABS(CAST(p.author_id AS INTEGER)))
+                    ELSE
+                        CONCAT('https://vk.com/id', CAST(p.author_id AS INTEGER))
+                END
+            WHEN p.social_network = 'YT' THEN
+                CONCAT('https://www.youtube.com/channel/', p.author_id)
         END AS "Автор",
         h.name as "Хэштег"
     FROM post p
